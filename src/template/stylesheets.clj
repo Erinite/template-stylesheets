@@ -1,4 +1,4 @@
-(ns template.stylesheet
+(ns template.stylesheets
   (:require
     [instaparse.core :as insta]))
 

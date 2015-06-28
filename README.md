@@ -1,4 +1,4 @@
-# Erinite/template-stylesheet
+# Erinite/template-stylesheets
 
 A companion library to [Erinite/template](https://github.com/Erinite/template)
 which allows transformations to be written in a CSS-like DSL.
@@ -36,7 +36,7 @@ ul.details li.details span {
 Now the code:
 
 ```clj
-(require '[erinite.template.stylesheet :as tss])
+(require '[erinite.template.stylesheets :as tss])
 (require '[erinite.template.core :as t])
 
 ;; A hiccup template
