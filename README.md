@@ -51,7 +51,7 @@ Now the code:
               [:div#footer]])
 
 ;; Transformation rules
-(def transformations (tss/stylesheet (slurp "xforms.tss")))
+(def transformations (tss/stylesheet (slurp "xforms.tss"))) ; <-- Stylesheet used here!
 
 ;; Compile the template and transformation rules to create a render function
 (def render-template (t/compile-template hiccup transformations))
