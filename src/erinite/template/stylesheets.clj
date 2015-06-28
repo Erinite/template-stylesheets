@@ -1,4 +1,4 @@
-(ns template.stylesheets
+(ns erinite.template.stylesheets
   (:require
     [instaparse.core :as insta]))
 
@@ -21,12 +21,12 @@
      <element>    = #'[^\\s{}#\\.]+'
      xform        = <whitespace>? command <whitespace>? <':'> <whitespace>? value <whitespace>? <';'>
      <command>    = #'[^\\s{}:]+'
-     <value>      = keyword | vector | string
-     string       = <'\"'> #'.*' <'\"'>
-     keyword      = #'[^\\s;\\[\\]]+'
+     <value>      = (keyword | vector | string) (<whitespace> value)*
+     string       = <'\"'> (!'\"' #'.')* <'\"'>
+     keyword      = #'[^\\s;\\[\\]\\\"]+'
      vector       = <'['> item (<whitespace> item)* <']'>
      <item>       = string | keyword
-     <whitespace> = white | comment
+     <whitespace> = (white | comment)+
      comment      = '//' #'.*' ('\n' | #'$')
      white        = #'\\s+'"))
 
@@ -36,9 +36,10 @@
     merge
     (insta/transform
       {:keyword keyword
+       :string  str
        :vector  (fn [& nodes] (into [] nodes))
        :sel     (fn [& nodes] (keyword (apply str nodes)))
-       :xform   (fn [command value] [(keyword command) value])
+       :xform   (fn [command & values] (into [(keyword command)] values))
        :rule    (fn [selector & xforms] {selector xforms})}
       (tss-parser tss))))
 
