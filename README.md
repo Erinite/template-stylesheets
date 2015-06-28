@@ -115,12 +115,8 @@ ul.details li.details span {
 This means that:
 ```clj
 (def stylesheet (slurp "xforms.tss" )
-(def transformations (tss/from-stylesheet stylesheet))
-(def stylesheet2 (tss/to-stylesheet transformations))
-(def transformations2 (tss/from-stylesheet stylesheet2))
-(= transformations transformations2)
-;; stylesheet and stylesheet2 may not be equal because their whitespace may not
-;; match (and if stylesheet contained comments, then they would be stripped)
+(= (-> stylesheet tss/from-stylesheet)
+   (-> stylesheet tss/from-stylesheet tss/to-stylesheet tss/from-stylesheet))
 ```
 
 
