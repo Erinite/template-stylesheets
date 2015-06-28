@@ -51,7 +51,7 @@ Now the code:
               [:div#footer]])
 
 ;; Transformation rules
-(def transformations (tss/stylesheet (slurp "xforms.tss"))) ; <-- Stylesheet used here!
+(def transformations (tss/from-stylesheet (slurp "xforms.tss"))) ; <-- Stylesheet used here!
 
 ;; Compile the template and transformation rules to create a render function
 (def render-template (t/compile-template hiccup transformations))
@@ -79,6 +79,48 @@ The call to render-template would output this transformed hiccup template:
       [:span {} "Some more text"]
       [:a {:class "link" :href "http://example.com"} "link"]]]
   [:div {:id "footer"}]])
+```
+
+It is also possible to turn a transformation map into a stylesheet:
+
+```clj
+(require '[erinite.template.stylesheets :as tss])
+
+;; Transformation rules
+(def transformations {[:div#name :.first.name]        [:content :first-name]
+                      [:div#name :.last.name]         [:content :last-name]
+                      [:ul.details]                   [:clone-for :details]
+                      [:ul.details :li.details :span] [:content :text]})
+
+(println (tss/to-stylesheet transformations))
+```
+
+This would output the stylesheet from above:
+
+```css
+div#name .first.name {
+    content: first-name;
+}
+div#name .last.name {
+    content: last-name;
+}
+ul.details {
+    clone-for: details;
+}
+ul.details li.details span {
+    content: text;
+}
+```
+
+This means that:
+```clj
+(def stylesheet (slurp "xforms.tss" )
+(def transformations (tss/from-stylesheet stylesheet))
+(def stylesheet2 (tss/to-stylesheet transformations))
+(def transformations2 (tss/from-stylesheet stylesheet2))
+(= transformations transformations2)
+;; stylesheet and stylesheet2 may not be equal because their whitespace may not
+;; match (and if stylesheet contained comments, then they would be stripped)
 ```
 
 

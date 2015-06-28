@@ -30,16 +30,51 @@
      comment      = '//' #'.*' ('\n' | #'$')
      white        = #'\\s+'"))
 
-(defn stylesheet 
+
+(defn from-stylesheet 
   [tss]
   (apply
     merge
     (insta/transform
-      {:keyword keyword
-       :string  str
-       :vector  (fn [& nodes] (into [] nodes))
-       :sel     (fn [& nodes] (keyword (apply str nodes)))
-       :xform   (fn [command & values] (into [(keyword command)] values))
-       :rule    (fn [selector & xforms] {selector xforms})}
+      {:keyword   keyword
+       :string    str
+       :vector    (fn [& nodes] (into [] nodes))
+       :sel       (fn [& nodes] (keyword (apply str nodes)))
+       :xform     (fn [command & values] (into [(keyword command)] values))
+       :selector  vector
+       :rule      (fn [selector & xforms] {selector xforms})}
       (tss-parser tss))))
+
+
+(defn- stringify
+  [thing]
+  (cond
+    (string? thing)   (str "\"" thing "\"")
+    (vector? thing)   (str "[" (clojure.string/join " " (map stringify thing)) "]")
+    (keyword? thing)  (name thing)))
+
+
+(defn to-stylesheet
+  [xforms]
+  (clojure.string/join
+    "\n"
+    (for [[selector rules] xforms]
+      (str
+        (clojure.string/join
+          " "
+          (map name selector))
+        " {\n"
+        (clojure.string/join
+          "\n"
+          (map
+            (fn [[rule & values]]
+              (str 
+                "\t"
+                (name rule) ": "
+                (clojure.string/join " " (map stringify values))
+                ";"))
+            (if (vector? (first rules))
+              rules
+              [rules])))
+        "\n}"))))
 
