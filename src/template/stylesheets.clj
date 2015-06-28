@@ -2,11 +2,6 @@
   (:require
     [instaparse.core :as insta]))
 
-;; Parser to skip whitespace between tokens
-(def ^:private whitespace-parser
-  (insta/parser
-    "whitespace = #'\\s+'"))
-
 ;whitespace? xform whitespace? '}'
 (def ^:private tss-parser
   (insta/parser
@@ -28,10 +23,12 @@
      <command>    = #'[^\\s{}:]+'
      <value>      = keyword | vector | string
      string       = <'\"'> #'.*' <'\"'>
-     keyword      = <':'> #'[^\\s;\\[\\]]+'
+     keyword      = #'[^\\s;\\[\\]]+'
      vector       = <'['> item (<whitespace> item)* <']'>
      <item>       = string | keyword
-     <whitespace> = #'\\s+'"))
+     <whitespace> = white | comment
+     comment      = '//' #'.*' ('\n' | #'$')
+     white        = #'\\s+'"))
 
 (defn stylesheet 
   [tss]

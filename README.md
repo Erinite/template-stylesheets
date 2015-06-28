@@ -20,16 +20,16 @@ First, the stylesheet, `xforms.tss`:
 
 ```css
 div#name .first.name {
-    content: :first-name;
+    content: first-name;
 }
 div#name .last.name {
-    content: :last-name;
+    content: last-name;
 }
 ul.details {
-    clone-for: :details;
+    clone-for: details;
 }
 ul.details li.details span {
-    content: :text;
+    content: text;
 }
 ```
 
